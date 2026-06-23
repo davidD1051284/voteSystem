@@ -10,15 +10,27 @@ import Register from '../views/Register.vue';
 const routes = [
    {
     path: '/',
-    redirect: '/login'
+    redirect: '/vote'
   },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
 
-  { path: '/vote', component: VoteList },
-  { path: '/vote/:id', component: VotePage },
+  {
+    path: '/vote',
+    component: VoteList,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/vote/:id',
+    component: VotePage,
+    meta: { requiresAuth: true }
+  },
 
-  { path: '/admin', component: AdminVote }
+  {
+    path: '/admin',
+    component: AdminVote,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  }
 ];
 
 const router = createRouter({
@@ -29,10 +41,20 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const user = JSON.parse(localStorage.getItem('user'));
 
-  const publicPages = ['/login', '/register'];
+  const isLoggedIn = !!user;
 
-  if (!publicPages.includes(to.path) && !user) {
+  const isPublic = to.path === '/login' || to.path === '/register';
+
+  // 1️⃣ 沒登入 → 直接導 login
+  if (!isLoggedIn && !isPublic) {
     return next('/login');
+  }
+
+  // 2️⃣ admin 權限檢查
+  if (to.meta.requiresAdmin) {
+    if (user?.role !== 'admin') {
+      return next('/vote'); // 或 redirect /403
+    }
   }
 
   next();

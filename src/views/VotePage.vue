@@ -12,6 +12,11 @@
       {{ vote.voteName }}
     </h2>
 
+    <!-- 🚨 投票限制提示（放這裡） -->
+    <div v-if="hasVoted" class="alert-box">
+      你已投票完，無法進行第2次投票
+    </div>
+
     <!-- loading -->
     <div v-if="loading" class="loading">
       載入中...
@@ -32,6 +37,7 @@
             :value="option.optionId"
             v-model="selected"
             class="option-checkbox"
+            :disabled="hasVoted"
           >
 
           <span class="option-text">
@@ -51,7 +57,7 @@
     <button
       class="vote-btn"
       @click="handleSubmit"
-      :disabled="selected.length === 0"
+      :disabled="selected.length === 0 || hasVoted"
     >
       投票
     </button>
@@ -61,25 +67,41 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { getVote, submitVote as apiSubmitVote } from '../api/voteApi';
+import { useRoute, useRouter } from 'vue-router';
+import { getVote, submitVote as apiSubmitVote, checkHasVoted } from '../api/voteApi';
+import Swal from 'sweetalert2';
 
 const route = useRoute();
+const router = useRouter();
 
 const vote = ref({ options: [] });
 const selected = ref([]);
 const loading = ref(true);
+const hasVoted = ref(false);
+
+const user = ref(JSON.parse(localStorage.getItem('user')));
 
 const loadVote = async () => {
   try {
     const id = route.params.id;
+    const userId = user.value?.id;
 
-    const res = await getVote(id);
-    console.log(res)
+    if (!id || !userId) {
+      console.error("id or userId missing");
+      return;
+    }
+
+    const [voteRes, votedRes] = await Promise.all([
+      getVote(id),
+      checkHasVoted(id, userId)
+    ]);
+
     vote.value = {
-      ...res.data,
-      options: res.data.options ?? []
+      ...voteRes.data,
+      options: voteRes.data.options ?? []
     };
+
+    hasVoted.value = votedRes.data;
 
   } finally {
     loading.value = false;
@@ -90,15 +112,21 @@ onMounted(loadVote);
 
 const handleSubmit = async () => {
   const id = route.params.id;
+  const userId = user.value?.id;
 
   await apiSubmitVote(id, {
-    userId: 1,
+    userId,
     optionIds: selected.value
   });
 
-  alert("投票成功");
+  Swal.fire({
+    icon: 'success',
+    title: '投票成功',
+    text: '已成功投票'
+  });
+
   selected.value = [];
-  await loadVote();
+  router.push('/');
 };
 </script>
 
@@ -181,5 +209,15 @@ const handleSubmit = async () => {
     background: #ccc;
     cursor: not-allowed;
   }
+}
+
+.alert-box {
+  background: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
 }
 </style>

@@ -24,24 +24,32 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-
+import { Login } from '@/api/voteApi';
 import Swal from 'sweetalert2';
 
 const username = ref('');
 const password = ref('');
-const router = useRouter();
+const role = ref('visitor')
+const router = useRouter('');
 
 const login = async () => {
   try {
-    const res = await axios.post('/api/auth/login', {
+
+    const data = {
       username: username.value,
-      password: password.value
-    });
+      password: password.value,
+      role: role.value
+    };
+
+    const res = await Login(data);
+
+    console.log(res)
 
     const user = res.data;
+
+    console.log(user.role);
 
     localStorage.setItem('user', JSON.stringify(user));
 
@@ -52,6 +60,7 @@ const login = async () => {
     }
 
   } catch (err) {
+    console.log("login error:", err);
     Swal.fire({
         icon: 'error',
         title: '登入失敗',

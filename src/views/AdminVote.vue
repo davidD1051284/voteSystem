@@ -78,15 +78,15 @@
       <tbody>
         <tr
           v-for="vote in votes"
-          :key="vote.voteId"
+          :key="vote.id"
         >
-          <td>{{ vote.voteId }}</td>
+          <td>{{ vote.id }}</td>
           <td>{{ vote.voteName }}</td>
 
           <td>
             <button
               class="btn btn-danger"
-              @click="remove(vote.voteId)"
+              @click="remove(vote.id)"
             >
               刪除
             </button>
@@ -205,6 +205,7 @@ const create = async () => {
 
 /* 🗑 刪除投票 */
 const remove = async (id) => {
+  console.log("delete id =", id);
   const result = await Swal.fire({
     title: '確定刪除？',
     text: '刪除後無法復原',

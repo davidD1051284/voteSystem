@@ -1,8 +1,22 @@
 <template>
   <div class="container mt-4">
 
-    <h2>投票系統</h2>
+    <!-- 上方工具列 -->
+    <div class="top-bar">
+      <h2>投票系統</h2>
 
+      <div class="user-box">
+        <span class="user-name">
+          👤 {{ user?.username || 'Guest' }}
+        </span>
+
+        <button class="btn btn-danger" @click="logout">
+          登出
+        </button>
+      </div>
+    </div>
+
+    <!-- 投票列表 -->
     <div
       class="card mb-3"
       v-for="vote in votes"
@@ -10,13 +24,11 @@
     >
       <div class="card-body">
 
-        <h5>
-          {{ vote.voteName }}
-        </h5>
+        <h5>{{ vote.voteName }}</h5>
 
         <router-link
           class="btn btn-primary"
-          :to="'/vote/' + vote.voteId"
+          :to="'/vote/' + vote.id"
         >
           進入投票
         </router-link>
@@ -29,19 +41,23 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { getVotes } from '../api/voteApi';
 
-console.log("VoteList 載入了");
+const router = useRouter();
 
 const votes = ref([]);
+const user = ref(JSON.parse(localStorage.getItem('user')));
+
+// 登出
+const logout = () => {
+  localStorage.removeItem('user'); // 清掉登入資料
+  router.push('/login');           // 跳回登入頁
+};
 
 onMounted(async () => {
   try {
     const res = await getVotes();
-
-    console.log("API回傳:", res);
-    console.log("API回傳:", res.data);
-
     votes.value = res.data;
   } catch (err) {
     console.error("API錯誤:", err);
@@ -123,5 +139,36 @@ h5 {
   color: #9ca3af;
   padding: 40px 0;
   font-size: 14px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-name {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* 登出按鈕 */
+.btn-danger {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+
+  &:hover {
+    background: #dc2626;
+  }
 }
 </style>

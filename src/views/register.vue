@@ -24,26 +24,66 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { Register } from '@/api/voteApi';
+import Swal from 'sweetalert2';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
-const username = ref('');
-const password = ref('');
-const role = ref('visitor');
+const username = ref('')
+const password = ref('')
+const role = ref('visitor')
 
-const register = () => {
-  if (!username.value || !password.value) return;
+const register = async () => {
 
-  const user = {
-    username: username.value,
-    role: role.value
-  };
+  // console.log("u: ",username.value);
 
-  localStorage.setItem('user', JSON.stringify(user));
+  if (!username.value) {
+    Swal.fire({
+      icon: 'error',
+      title: '註冊失敗',
+      text: '帳號不能為空'
+    });
+    return;
+  }
 
-  router.push('/login');
+  if (!password.value) {
+    Swal.fire({
+      icon: 'error',
+      title: '註冊失敗',
+      text: '密碼不能為空'
+    });
+    return;
+  }
+
+  try {
+
+    const data = {
+      username: username.value,
+      password: password.value,
+      role: role.value
+    };
+
+    const res = await Register(data);
+
+    Swal.fire({
+      icon: 'success',
+      title: '註冊成功',
+      text: res.data
+    });
+
+    router.push('/login');
+
+  } catch (error) {
+
+    Swal.fire({
+      icon: 'error',
+      title: '註冊失敗',
+      text: error.response?.data || '系統錯誤'
+    });
+
+  }
 };
 </script>
 
