@@ -1,7 +1,6 @@
 <template>
   <div class="container mt-4">
 
-    <!-- 上方工具列 -->
     <div class="top-bar">
       <h2>投票系統</h2>
 
@@ -16,7 +15,6 @@
       </div>
     </div>
 
-    <!-- 投票列表 -->
     <div
       class="card mb-3"
       v-for="vote in votes"

@@ -1,7 +1,25 @@
 <template>
-  <div class="container mt-4">
 
-    <h2 class="page-title">投票管理</h2>
+  <!-- header -->
+  <div class="top-bar mb-3">
+    
+  </div>
+
+    <div class="container mt-4">
+
+      <div class="top-bar">
+        <h2 class="page-title">投票管理</h2>
+
+        <div class="user-box">
+          <div class="user-info">
+            👤 {{ username }}
+          </div>
+
+          <button class="btn btn-logout" @click="logout">
+            登出
+          </button>
+        </div>
+      </div>
 
     <div class="card p-3 mb-3">
 
@@ -107,6 +125,7 @@ import {
 } from '../api/voteApi';
 
 import Swal from 'sweetalert2';
+import { useRouter } from 'vue-router';
 
 const votes = ref([]);
 
@@ -119,7 +138,19 @@ const loadData = async () => {
   votes.value = res.data;
 };
 
-onMounted(loadData);
+const router = useRouter();
+
+const username = ref('');
+
+// 讀取登入資訊
+onMounted(() => {
+  loadData();
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user) {
+    username.value = user.username;
+  }
+});
 
 /* ➕ 新增選項 */
 const addOption = () => {
@@ -227,6 +258,20 @@ const remove = async (id) => {
   });
 
   loadData();
+};
+
+//登出
+const logout = () => {
+  localStorage.removeItem('user');
+
+  Swal.fire({
+    icon: 'success',
+    title: '已登出',
+    timer: 1200,
+    showConfirmButton: false
+  });
+
+  router.push('/login');
 };
 </script>
 
@@ -369,6 +414,37 @@ const remove = async (id) => {
 
   tr:hover {
     background: #f8fafc;
+  }
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+}
+
+.btn-logout {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+
+  &:hover {
+    background: #dc2626;
   }
 }
 </style>
