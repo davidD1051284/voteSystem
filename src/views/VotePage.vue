@@ -78,6 +78,7 @@ const vote = ref({ options: [] });
 const selected = ref([]);
 const loading = ref(true);
 const hasVoted = ref(false);
+const username = ref('');
 
 const user = ref(JSON.parse(localStorage.getItem('user')));
 
@@ -85,6 +86,10 @@ const loadVote = async () => {
   try {
     const id = route.params.id;
     const userId = user.value?.id;
+
+    if (user) {
+      username.value = user.value.username;
+    }
 
     if (!id || !userId) {
       console.error("id or userId missing");
@@ -114,8 +119,11 @@ const handleSubmit = async () => {
   const id = route.params.id;
   const userId = user.value?.id;
 
+  console.log(username.value);
+
   await apiSubmitVote(id, {
     userId,
+    userName: username.value,
     optionIds: selected.value
   });
 
