@@ -142,7 +142,6 @@ const router = useRouter();
 
 const username = ref('');
 
-// 讀取登入資訊
 onMounted(() => {
   loadData();
 
@@ -152,7 +151,6 @@ onMounted(() => {
   }
 });
 
-/* ➕ 新增選項 */
 const addOption = () => {
   const value = newOption.value.trim();
   if (!value) return;
@@ -174,12 +172,10 @@ const addOption = () => {
   newOption.value = '';
 };
 
-/* ❌ 刪除選項 */
 const removeOption = (index) => {
   options.value.splice(index, 1);
 };
 
-/* 🧾 建立投票 */
 const create = async () => {
   if (!voteName.value.trim()) {
     Swal.fire({
@@ -199,7 +195,6 @@ const create = async () => {
     return;
   }
 
-  // 再次檢查重複
   const set = new Set();
   for (const opt of options.value) {
     const key = opt.toLowerCase();
@@ -234,7 +229,6 @@ const create = async () => {
   loadData();
 };
 
-/* 🗑 刪除投票 */
 const remove = async (id) => {
   console.log("delete id =", id);
   const result = await Swal.fire({
@@ -260,7 +254,6 @@ const remove = async (id) => {
   loadData();
 };
 
-//登出
 const logout = () => {
   localStorage.removeItem('user');
 
@@ -277,13 +270,11 @@ const logout = () => {
 
 <style lang="scss" scoped>
 
-/* container */
 .container {
   max-width: 900px;
   margin: 30px auto;
 }
 
-/* card */
 .card {
   border-radius: 12px;
   border: 1px solid #e5e7eb;
@@ -297,7 +288,6 @@ const logout = () => {
   gap: 16px;
 }
 
-/* 每一列（統一核心） */
 .form-row,
 .option-input-row {
   display: flex;
@@ -305,14 +295,12 @@ const logout = () => {
   gap: 12px;
 }
 
-/* label */
 .form-label {
   width: 100px;
   font-weight: 600;
   margin: 0;
 }
 
-/* input */
 .form-control {
   flex: 1;
   height: 38px;
@@ -328,7 +316,6 @@ const logout = () => {
   }
 }
 
-/* button（唯一版本，避免衝突） */
 .btn {
   height: 38px;
   padding: 0 14px;
@@ -347,7 +334,6 @@ const logout = () => {
   transition: 0.2s;
 }
 
-/* button colors */
 .btn-primary {
   background: #3b82f6;
   color: white;
@@ -375,7 +361,6 @@ const logout = () => {
   }
 }
 
-/* option list */
 .option-list {
   display: flex;
   flex-direction: column;
@@ -393,7 +378,6 @@ const logout = () => {
   background: #f9fafb;
 }
 
-/* table */
 .table {
   width: 100%;
   border-collapse: collapse;

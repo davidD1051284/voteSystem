@@ -7,22 +7,18 @@
       </router-link>
     </div>
     
-    <!-- 標題 -->
     <h2 class="vote-title">
       {{ vote.voteName }}
     </h2>
 
-    <!-- 🚨 投票限制提示（放這裡） -->
     <div v-if="hasVoted" class="alert-box">
       你已投票完，無法進行第2次投票
     </div>
 
-    <!-- loading -->
     <div v-if="loading" class="loading">
       載入中...
     </div>
 
-    <!-- options -->
     <div v-else class="options">
 
       <div
@@ -53,7 +49,6 @@
 
     </div>
 
-    <!-- button -->
     <button
       class="vote-btn"
       @click="handleSubmit"

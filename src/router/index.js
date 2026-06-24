@@ -45,15 +45,13 @@ router.beforeEach((to, from, next) => {
 
   const isPublic = to.path === '/login' || to.path === '/register';
 
-  // 1️⃣ 沒登入 → 直接導 login
   if (!isLoggedIn && !isPublic) {
     return next('/login');
   }
 
-  // 2️⃣ admin 權限檢查
   if (to.meta.requiresAdmin) {
     if (user?.role !== 'admin') {
-      return next('/vote'); // 或 redirect /403
+      return next('/vote');
     }
   }
 

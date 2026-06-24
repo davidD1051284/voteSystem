@@ -76,7 +76,7 @@ h2 {
   text-align: center;
 }
 
-/* 投票卡片 */
+
 .card {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -92,7 +92,6 @@ h2 {
   }
 }
 
-/* card內容 */
 .card-body {
   display: flex;
   justify-content: space-between;
@@ -100,7 +99,6 @@ h2 {
   padding: 16px 18px;
 }
 
-/* 投票名稱 */
 h5 {
   margin: 0;
   font-size: 16px;
@@ -131,7 +129,6 @@ h5 {
   }
 }
 
-/* 空狀態（可選） */
 .empty {
   text-align: center;
   color: #9ca3af;
@@ -157,7 +154,7 @@ h5 {
   color: #374151;
 }
 
-/* 登出按鈕 */
+
 .btn-danger {
   background: #ef4444;
   border: none;
